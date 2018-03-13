@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element attributes="email_client=true" audit="true" extends="task" label="Meetup Events" max_length="40" name="x_8080_meetup_meetup_events" sizeclass="7" type="collection">
+        <element attributes="omit_sys_original=true" label="Cost per person" max_length="20" name="u_cost" read_only="true" type="currency"/>
+    </element>
+</database>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_ws_operation">
+    <sys_ws_operation action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <consumes>application/json,application/xml,text/xml</consumes>
+        <consumes_customized>false</consumes_customized>
+        <default_operation_uri/>
+        <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
+        <http_method>POST</http_method>
+        <name>settle_up</name>
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+
+    // Create payment transaction
+	var eventID = request.body.data.event_id;
+	var transaction = request.body.data.transaction;
+	var answer = {};
+	
+	var mu = new MeetupUtil(eventID);
+	var status = mu.createPayment(transaction);
+	answer.status = status;
+	response.setBody(answer);
+
+})(request, response);]]></operation_script>
+        <operation_uri>/api/x_8080_meetup/response/settle</operation_uri>
+        <produces>application/json,application/xml,text/xml</produces>
+        <produces_customized>false</produces_customized>
+        <relative_path>/settle</relative_path>
+        <request_example/>
+        <requires_acl_authorization>false</requires_acl_authorization>
+        <requires_authentication>true</requires_authentication>
+        <short_description/>
+        <sys_class_name>sys_ws_operation</sys_class_name>
+        <sys_created_by>madeleonardis</sys_created_by>
+        <sys_created_on>2018-01-05 16:18:07</sys_created_on>
+        <sys_id>43cbc0a04f63c3008928a7d18110c7c8</sys_id>
+        <sys_mod_count>9</sys_mod_count>
+        <sys_name>settle_up</sys_name>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sys_ws_operation_43cbc0a04f63c3008928a7d18110c7c8</sys_update_name>
+        <sys_updated_by>madeleonardis</sys_updated_by>
+        <sys_updated_on>2018-01-05 17:01:23</sys_updated_on>
+        <web_service_definition display_value="Meetup API">c45db9204f1e03008cea3b718110c74e</web_service_definition>
+        <web_service_version/>
+    </sys_ws_operation>
+</record_update>

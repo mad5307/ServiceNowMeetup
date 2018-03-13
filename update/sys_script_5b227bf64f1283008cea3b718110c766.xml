@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="sys_script">
+    <sys_script action="INSERT_OR_UPDATE">
+        <abort_action>false</abort_action>
+        <access>package_private</access>
+        <action_delete>false</action_delete>
+        <action_insert>true</action_insert>
+        <action_query>false</action_query>
+        <action_update>true</action_update>
+        <active>true</active>
+        <add_message>false</add_message>
+        <advanced>true</advanced>
+        <change_fields>false</change_fields>
+        <client_callable>false</client_callable>
+        <collection>x_8080_meetup_actual_expenses</collection>
+        <condition/>
+        <description/>
+        <execute_function>false</execute_function>
+        <filter_condition table="x_8080_meetup_actual_expenses">correlation_idISEMPTY^type=new^EQ<item endquery="false" field="correlation_id" goto="false" newquery="false" operator="ISEMPTY" or="false" value=""/>
+            <item endquery="false" field="type" goto="false" newquery="false" operator="=" or="false" value="new"/>
+            <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
+        </filter_condition>
+        <is_rest>false</is_rest>
+        <message/>
+        <name>Create New Expense</name>
+        <order>100</order>
+        <priority>100</priority>
+        <rest_method/>
+        <rest_method_text/>
+        <rest_service/>
+        <rest_service_text/>
+        <rest_variables/>
+        <role_conditions/>
+        <script><![CDATA[(function executeRule(current, previous /*null when async*/) {
+	
+	// Create expense record
+	var groupID = current.meetup_event.correlation_id.toString();
+	var cost = parseFloat(current.cost.getDisplayValue().replace(/(\$|,)/g,""));
+	var participants = current.participants.split(",");
+	var splitBy = participants.length;
+	var owed = (cost/splitBy);
+	var splitCost = (parseFloat(owed).toFixed(2)*splitBy).toFixed(2);
+	var su = new SplitwiseUtil(current.meetup_event);
+	var participantObj = [];
+	
+	var body = "";
+	for(var i = 0; i < participants.length; i++){
+		var inv = new GlideRecord('x_8080_meetup_m2m_invite');
+		inv.addQuery('user',participants[i]);
+		inv.addQuery('meetup_events',current.meetup_event);
+		inv.query();
+		while(inv.next()){
+			var user = {
+				'sys_id':participants[i],
+				'id':inv.correlation_id,
+				'owed':parseFloat(owed).toFixed(2),
+				'paid':parseFloat(0)
+			};
+			
+			if(participants[i].toString() == current.user.sys_id.toString()){
+				user.paid = splitCost;
+			}
+			
+			participantObj.push(user);
+		}
+	}
+	
+	for(var p = 0; p<participantObj.length;p++){
+		if(p == 0){
+			body = "users__"+p+"__user_id="+participantObj[p].id+"&users__"+p+"__paid_share="+participantObj[p].paid+"&users__"+p+"__owed_share="+participantObj[p].owed;
+		} else {
+			body = body+"&users__"+p+"__user_id="+participantObj[p].id+"&users__"+p+"__paid_share="+participantObj[p].paid+"&users__"+p+"__owed_share="+participantObj[p].owed;
+		}
+	}
+	
+	var expRes = su.createExpense(groupID, splitCost, current.short_description.toString(),parseInt(current.category.id),body);
+	gs.info("Expense Response - "+expRes);
+	var expObj = JSON.parse(expRes);
+	var expense = expObj.expenses[0];
+	if(expObj && expObj.expenses)
+		current.correlation_id = expObj.expenses[0].id;
+	current.setWorkflow(false);
+	current.update();
+	
+	su.updateBalances(groupID);
+	
+})(current, previous);]]></script>
+        <sys_class_name>sys_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-11-12 05:20:11</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>5b227bf64f1283008cea3b718110c766</sys_id>
+        <sys_mod_count>60</sys_mod_count>
+        <sys_name>Create New Expense</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sys_script_5b227bf64f1283008cea3b718110c766</sys_update_name>
+        <sys_updated_by>madeleonardis</sys_updated_by>
+        <sys_updated_on>2018-01-04 19:24:07</sys_updated_on>
+        <template/>
+        <u_update_count/>
+        <when>async</when>
+    </sys_script>
+    <sys_translated_text action="delete_multiple" query="documentkey=5b227bf64f1283008cea3b718110c766"/>
+</record_update>

@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function($rootScope, $scope, $timeout, $location, $log, $window, $http) {
+	var c = this;
+	var scope = $scope;
+
+	c.getEvent = function(){
+		if(c.data.event_id){
+			c.server.get({action:'getEvent', event_id:c.data.event_id}).then(function(r){
+				c.data.event = r.data.event;
+			});
+		}
+	};
+
+	c.settleUp = function(t,i){
+		var reqBody = {
+			"event_id" : c.data.event_id,
+			"transaction" : JSON.stringify(t)
+		};
+		$http({
+			method : "POST",
+			url : "/api/x_8080_meetup/response/settle",
+			headers : {"Content-type" : "application/json"},
+			data : reqBody
+		}).then(function success(response) {
+			var idx = c.data.transactions[i].user_index;
+			var bal = c.data.event.participant_data[idx].owes;
+			bal = bal-parseFloat(c.data.transactions[i].amount).toFixed(2);
+			c.data.event.participant_data[idx].owes = bal;
+			c.data.transactions[i].amount = 0;
+			c.data.transactions[i].show_btn = false;
+			c.data.transactions[i].t_class = 'settled';
+			t.show_btn = false;
+			t.amount = 0;
+		}, function failure(response) {
+			console.error('sendResponse(): failure');
+		});
+	};
+
+	c.suggestTransaction = function(user,idx){
+		c.server.get({action:"transactions",user:user,event_id:c.data.event.event_id,group_id:c.data.event.correlation_id}).then(function(r){
+			c.data.transactions = r.data.transactions
+			for(var t = 0; t<c.data.transactions.length; t++){
+				for(var p = 0; p < c.data.event.participant_data.length; p++){
+					if(c.data.transactions[t].to == c.data.event.participant_data[p].correlation_id){
+						c.data.transactions[t].to_name = c.data.event.participant_data[p].name;
+						c.data.transactions[t].show_btn = true;
+						c.data.transactions[t].t_class = 'owes';
+						c.data.transactions[t].user_index = idx;
+						
+					}
+				}
+			}
+			c.data.show_transaction = true;
+		})
+	}
+
+	var url = $location.search();
+	if(url.event_id){
+		c.data.status = {state:'SUCCESS',description:''};
+		c.data.event_id = url.event_id;
+		c.getEvent();
+	}else{
+		c.data.status = {state:'ERROR',description:'No event id provided'};
+	}
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.title {
+  float : left;
+  font-size : 18px;
+  font-weight: bold;
+}
+
+.settled {
+  float : right;
+  background-color:#428bca;
+  color:#fff;
+  border-radius:15px;
+  padding: 5px;
+}
+.settle-btn {
+  float : right;
+  padding: 5px;
+  vertical-align:bottom;
+}
+
+.owes {
+  float : right;
+  background-color:red;
+  color:#fff;
+  border-radius:15px;
+  padding: 5px;
+}
+
+/* The Modal */
+.modal {
+  display: block; /* Hidden by default */
+  position: absolute; /* Stay in place */
+  z-index: 3; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  margin: 0px 0px 15px 15px;
+}
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 55%;
+  vertical-align: middle;
+  font-size: large;
+}
+p.modal-text {
+    vertical-align: middle;
+    text-align: center;
+    margin: 0px;
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>meetup_event</id>
+        <internal>false</internal>
+        <link/>
+        <name>Meetup Event</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+
+	if(input){
+		if(input.action == 'getEvent'){
+			var gr = new GlideRecord("x_8080_meetup_meetup_events");
+			gr.addQuery("sys_id", input.event_id);
+			gr.query();
+			if (gr.next()) {
+				data.event = {};
+				data.event = {
+					participants:gr.watch_list.getDisplayValue().split(", "),
+					name:gr.short_description.getDisplayValue(),
+					description:gr.description.getDisplayValue(),
+					start:gr.work_start.getDisplayValue().split(' ')[0],
+					end:gr.work_end.getDisplayValue().split(' ')[0],
+					correlation_id:gr.correlation_id.getDisplayValue(),
+					participant_data:[]
+				};
+
+				for(var i=0; i<data.event.participants.length;i++){
+					var ep = new GlideRecord('x_8080_meetup_m2m_invite');
+					ep.addQuery('meetup_events',input.event_id);
+					ep.addQuery('user.name',data.event.participants[i]);
+					ep.query();
+					if(ep.next()){
+						var participant = {
+							name:data.event.participants[i],
+							paid:ep.paid.getDisplayValue().replace(',',''),
+							owes:parseFloat(ep.owes.getDisplayValue().split('$')[1].replace(',','')).toFixed(2),
+							correlation_id:ep.correlation_id.getDisplayValue()
+						}
+						data.event.participant_data.push(participant);
+					}
+				}
+			}
+		}
+
+		if(input.action == 'transactions'){
+			data.transactions = [];
+			var groupRes = getGroup(input.event_id,input.group_id);
+			var groupObj = JSON.parse(groupRes);
+			var user_id = input.user.correlation_id;
+			if(groupObj.group.simplified_debts != undefined){
+				data.debts = groupObj.group.simplified_debts;
+				var debts = groupObj.group.simplified_debts;
+				for(var t = 0; t<debts.length; t++){
+					if(debts[t].from == user_id){
+						debts[t].from_name = input.user.name;
+						data.transactions.push(debts[t]);
+					}
+				}
+				data.simplified_debts = groupObj;
+			}
+		}
+	}
+
+	function getGroup(event_id,group_id){
+		var su = new SplitwiseUtil(event_id);
+		var groupRes = su.getGroup(group_id);
+		return groupRes;
+	}
+
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>madeleonardis</sys_created_by>
+        <sys_created_on>2018-01-03 21:58:47</sys_created_on>
+        <sys_id>d44acbbb4f9343008928a7d18110c787</sys_id>
+        <sys_mod_count>110</sys_mod_count>
+        <sys_name>Meetup Event</sys_name>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sp_widget_d44acbbb4f9343008928a7d18110c787</sys_update_name>
+        <sys_updated_by>madeleonardis</sys_updated_by>
+        <sys_updated_on>2018-01-08 19:36:40</sys_updated_on>
+        <template><![CDATA[<div class="col-xs-12" style="padding:0px 0px 5px 0px">
+  <a ng-href="?id=meetup_event_list"><button style="float:right; margin:2px;" type="button" class="btn btn-danger btn-sm">Back</button></a>
+</div>
+
+<h3 style="margin-top:5px">
+  {{data.event.name}}
+</h3>
+<h5>
+  {{data.event.description}}
+</h5>
+<div>
+  <table class="table table-striped">
+    <tr ng-repeat="e in data.event.participant_data track by $index">
+      <td>
+        <div class="title">
+          {{e.name}}
+        </div>
+        <div>
+          <div ng-if="e.owes == 0" class="settled">
+            Settled
+          </div>
+          <div ng-if="e.owes != 0" class="owes">
+            {{e.owes | currency}}
+          </div>
+        </div>
+        <div style="clear: both;"></div>
+        <div>
+          <i class="fa fa-clock-o"></i> {{data.event.start}} - {{data.event.end}}
+        </div>
+        <div>
+          {{e.description}}
+        </div>
+        <button ng-if="e.owes != 0" class="btn btn-info" ng-click="c.suggestTransaction(e,$index)">
+          Suggest Transactions
+        </button>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div ng-show="data.show_transaction" id="myModal" class="modal">
+  <div class="well modal-content">
+    <table class="table table striped">
+      <tr ng-repeat="t in data.transactions track by $index">
+        <td>
+          <div class="title">
+            {{t.from_name}} > {{t.to_name}} 
+          </div>
+          <div ng-class="t.t_class">
+            {{t.amount | currency}}
+          </div>
+          <div class="settle-btn" ng-show="t.show_btn">
+            <button ng-if="e.owes!= '$0.00'" class="btn btn-sm btn-success" ng-click="c.settleUp(t,$index)">
+              Settle Up
+            </button>
+          </div>
+        </td>
+
+
+      </tr>
+    </table>
+    <button ng-click="c.data.show_transaction = false;" class="btn btn-success">
+      Done
+    </button>
+  </div>
+</div>
+
+<div class="col-xs-12" style="padding:0px 0px 15px 0px">
+  <a ng-href="?id=meetup_event_list"><button style="float:left; margin:2px;" type="button" class="btn btn-danger btn-sm">Back</button></a>
+</div>]]></template>
+    </sp_widget>
+</record_update>

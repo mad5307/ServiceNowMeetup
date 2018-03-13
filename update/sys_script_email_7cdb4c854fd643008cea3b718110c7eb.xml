@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_script_email">
+    <sys_script_email action="INSERT_OR_UPDATE">
+        <name>meetup_worknotes</name>
+        <new_lines_to_html>false</new_lines_to_html>
+        <script><![CDATA[(function runMailScript(/* GlideRecord */ current, /* TemplatePrinter */ template,
+/* Optional EmailOutbound */ email, /* Optional GlideRecord */ email_action,
+/* Optional GlideRecord */ event) {
+	
+	// Generate body of notification with worknotes
+	var user = new GlideRecord('sys_user');
+	user.get(event.user_id);
+	email.setSubject(current.short_description+": Update from "+user.first_name);
+	var worknotes = current.work_notes.getJournalEntry(1).split(" ").splice(7);
+	worknotes[0] = worknotes[0].replace("(Notes)","");
+	var font = "Helvetica Neue";
+	template.print("<p style='font-family: SourceSansPro, "+font+", Arial;'>"+worknotes.join(" ")+"</p>");
+	
+})(current, template, email, email_action, event);]]></script>
+        <sys_class_name>sys_script_email</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-11-06 02:01:00</sys_created_on>
+        <sys_id>7cdb4c854fd643008cea3b718110c7eb</sys_id>
+        <sys_mod_count>10</sys_mod_count>
+        <sys_name>meetup_worknotes</sys_name>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sys_script_email_7cdb4c854fd643008cea3b718110c7eb</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-11-06 02:27:23</sys_updated_on>
+    </sys_script_email>
+</record_update>

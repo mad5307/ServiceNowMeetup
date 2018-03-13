@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+    <sys_choice action="INSERT_OR_UPDATE" field="response" table="x_8080_meetup_m2m_invite" version="3">
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>response</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Invited</label>
+            <language>en</language>
+            <name>x_8080_meetup_m2m_invite</name>
+            <sequence>0</sequence>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2017-11-04 15:55:49</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>5ec7702c4f5a03008cea3b718110c79e</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2017-11-04 15:55:49</sys_updated_on>
+            <value>Invited</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>response</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Going</label>
+            <language>en</language>
+            <name>x_8080_meetup_m2m_invite</name>
+            <sequence>1</sequence>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2017-11-04 15:55:49</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>dec7702c4f5a03008cea3b718110c79f</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2017-11-04 15:55:49</sys_updated_on>
+            <value>Going</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>response</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Not going</label>
+            <language>en</language>
+            <name>x_8080_meetup_m2m_invite</name>
+            <sequence>2</sequence>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2017-11-04 15:55:49</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>5ec7702c4f5a03008cea3b718110c7a0</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2017-11-04 15:55:49</sys_updated_on>
+            <value>Not going</value>
+        </sys_choice>
+        <sys_choice_set action="INSERT_OR_UPDATE">
+            <element>response</element>
+            <name>x_8080_meetup_m2m_invite</name>
+            <sys_class_name>sys_choice_set</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2017-11-04 15:55:49</sys_created_on>
+            <sys_id>42cf524f4f6603008928a7d18110c7b1</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>response</sys_name>
+            <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+            <sys_update_name>sys_choice_x_8080_meetup_m2m_invite_response</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2017-11-04 15:55:49</sys_updated_on>
+        </sys_choice_set>
+    </sys_choice>
+</record_update>

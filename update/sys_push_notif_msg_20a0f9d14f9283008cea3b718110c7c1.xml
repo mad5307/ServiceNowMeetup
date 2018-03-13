@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_push_notif_msg">
+    <sys_push_notif_msg action="INSERT_OR_UPDATE">
+        <message_string>${short_description} - commented </message_string>
+        <name>Meetup commented</name>
+        <push_app display_value="ServiceNow Mobile Application">ab704041ff1102009738ffffffffff33</push_app>
+        <push_message_content/>
+        <subject/>
+        <sys_class_name>sys_push_notif_msg</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-11-07 04:00:16</sys_created_on>
+        <sys_id>20a0f9d14f9283008cea3b718110c7c1</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Meetup commented</sys_name>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sys_push_notif_msg_20a0f9d14f9283008cea3b718110c7c1</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-11-07 04:00:16</sys_updated_on>
+        <table>x_8080_meetup_meetup_events</table>
+        <type>push</type>
+    </sys_push_notif_msg>
+</record_update>

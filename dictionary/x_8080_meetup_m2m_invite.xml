@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="Invite" max_length="40" name="x_8080_meetup_m2m_invite" type="collection">
+        <element label="Correlation ID" max_length="40" name="correlation_id" type="string"/>
+        <element label="Meetup Events" max_length="32" name="meetup_events" reference="x_8080_meetup_meetup_events" reference_floats="true" type="reference"/>
+        <element label="Owes" max_length="20" name="owes" type="currency"/>
+        <element label="Paid" max_length="20" name="paid" type="currency"/>
+        <element attributes="edge_encryption_enabled=true" choice="3" default="Invited" label="Response" max_length="40" name="response" type="string">
+            <choice>
+                <element label="Invited" sequence="0" value="Invited"/>
+                <element label="Going" sequence="1" value="Going"/>
+                <element label="Not going" sequence="2" value="Not going"/>
+            </choice>
+        </element>
+        <element display="true" label="User" max_length="32" name="user" reference="sys_user" type="reference"/>
+        <index name="index">
+            <element name="meetup_events"/>
+        </index>
+        <index name="index2">
+            <element name="user"/>
+        </index>
+    </element>
+</database>

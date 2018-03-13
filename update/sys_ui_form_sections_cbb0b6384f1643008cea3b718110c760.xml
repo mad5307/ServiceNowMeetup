@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+    <sys_ui_form_sections form_id="cbb0b6384f1643008cea3b718110c760" sys_domain="global" table="x_8080_meetup_meetup_events" version="3">
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>0</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2017-11-05 19:22:44</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>87b0b6384f1643008cea3b718110c761</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_8080_meetup_meetup_events" name="x_8080_meetup_meetup_events" sys_domain="global" view="Default view">cbb0b6384f1643008cea3b718110c760</sys_ui_form>
+            <sys_ui_section caption="NULL" display_value="" name="x_8080_meetup_meetup_events" sys_domain="global" view="Default view">e1a18d904fd203008cea3b718110c790</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2017-11-05 19:22:44</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>1</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2017-11-05 19:22:44</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>0fb0b6384f1643008cea3b718110c762</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_8080_meetup_meetup_events" name="x_8080_meetup_meetup_events" sys_domain="global" view="Default view">cbb0b6384f1643008cea3b718110c760</sys_ui_form>
+            <sys_ui_section caption="Notes" display_value="Notes" name="x_8080_meetup_meetup_events" sys_domain="global" view="Default view">cfb0b6384f1643008cea3b718110c761</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2017-11-05 19:22:44</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>2</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2017-11-06 02:28:28</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>e3229cc94fd643008cea3b718110c7fb</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_8080_meetup_meetup_events" name="x_8080_meetup_meetup_events" sys_domain="global" view="Default view">cbb0b6384f1643008cea3b718110c760</sys_ui_form>
+            <sys_ui_section caption="Notes History" display_value="Notes History" name="x_8080_meetup_meetup_events" sys_domain="global" view="Default view">eb225cc94fd643008cea3b718110c75d</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2017-11-06 02:28:28</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form action="INSERT_OR_UPDATE">
+            <name>x_8080_meetup_meetup_events</name>
+            <roles/>
+            <sys_class_name>sys_ui_form</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2017-11-05 19:22:44</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>cbb0b6384f1643008cea3b718110c760</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_8080_meetup_meetup_events</sys_name>
+            <sys_overrides/>
+            <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+            <sys_update_name>sys_ui_form_sections_cbb0b6384f1643008cea3b718110c760</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2017-11-05 19:22:44</sys_updated_on>
+            <sys_user/>
+            <view display_value="Default view" name="NULL">Default view</view>
+            <view_name/>
+        </sys_ui_form>
+    </sys_ui_form_sections>
+</record_update>

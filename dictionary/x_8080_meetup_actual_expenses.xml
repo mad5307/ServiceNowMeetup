@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="Actual Expenses" max_length="40" name="x_8080_meetup_actual_expenses" type="collection">
+        <element label="Category" max_length="32" name="category" reference="x_8080_meetup_splitwise_categories" type="reference"/>
+        <element label="Correlation ID" max_length="100" name="correlation_id" type="string"/>
+        <element label="How much?" max_length="20" name="cost" type="currency"/>
+        <element label="Event" max_length="32" name="meetup_event" reference="x_8080_meetup_meetup_events" type="reference"/>
+        <element label="Paid to" max_length="32" name="paid_to" reference="sys_user" reference_qual="javascript:new MeetupUtil(current.meetup_event).getAttendeeArray();" type="reference" use_reference_qualifier="advanced"/>
+        <element label="Split between" max_length="4000" name="participants" reference="sys_user" reference_qual="javascript:new MeetupUtil(current.meetup_event).getAttendeeArray();" type="glide_list" use_reference_qualifier="advanced"/>
+        <element display="true" label="What for?" max_length="100" name="short_description" type="string"/>
+        <element attributes="edge_encryption_enabled=true" choice="1" label="Type" mandatory="true" max_length="40" name="type" type="string">
+            <choice>
+                <element label="New Expense" sequence="0" value="new"/>
+                <element label="Repayment" sequence="1" value="payment"/>
+            </choice>
+        </element>
+        <element label="Paid by" max_length="32" name="user" reference="sys_user" reference_qual="javascript:new MeetupUtil(current.meetup_event).getAttendeeArray();" type="reference" use_reference_qualifier="advanced"/>
+        <index name="index">
+            <element name="paid_to"/>
+        </index>
+        <index name="index2">
+            <element name="category"/>
+        </index>
+        <index name="index3">
+            <element name="meetup_event"/>
+        </index>
+        <index name="index4">
+            <element name="user"/>
+        </index>
+    </element>
+</database>

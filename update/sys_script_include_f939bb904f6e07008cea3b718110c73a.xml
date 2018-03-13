@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_8080_meetup.getMissingArrayValue</api_name>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>getMissingArrayValue</name>
+        <script><![CDATA[var getMissingArrayValue = Class.create();
+getMissingArrayValue.prototype = {
+	initialize: function() {
+	},
+
+	getMissingCard: function(length,arr){
+		// will be the sum of the numbers in the array.
+		//arr = [1,2,3,4,5,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100];
+		var sum = 0;
+		length = length-1;
+		for (var i = 0; i < arr.length; i++){
+			sum += arr[i];
+		}
+		
+		var total = ((length + 1)*length)/2;
+		var missingVal = (length+1)-(sum-total);
+
+		// the total sum of numbers between 1 and arr.length.
+// 		gs.info("The length is "+length);
+// 		gs.info("Missing number: "+missingVal);
+// 		gs.info("Sum number is: "+sum);
+// 		gs.info("Total number is: " + total);
+		if(missingVal > 0)
+			return missingVal;
+		else
+			return "Nothing Missing";
+	},
+
+	type: 'getMissingArrayValue'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-11-16 21:41:28</sys_created_on>
+        <sys_id>f939bb904f6e07008cea3b718110c73a</sys_id>
+        <sys_mod_count>11</sys_mod_count>
+        <sys_name>getMissingArrayValue</sys_name>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sys_script_include_f939bb904f6e07008cea3b718110c73a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-11-16 21:51:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="Splitwise Categories" max_length="40" name="x_8080_meetup_splitwise_categories" type="collection">
+        <element default="true" label="Active" max_length="40" name="active" type="boolean"/>
+        <element label="Category" max_length="40" name="category" type="string"/>
+        <element label="ID" max_length="40" name="category_id" type="integer"/>
+        <element display="true" label="Display" max_length="40" name="display" type="string"/>
+        <element label="Subcategory" max_length="40" name="subcategory" type="string"/>
+    </element>
+</database>

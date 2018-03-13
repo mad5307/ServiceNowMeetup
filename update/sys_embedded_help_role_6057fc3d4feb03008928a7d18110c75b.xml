@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_embedded_help_role">
+    <sys_embedded_help_role action="INSERT_OR_UPDATE">
+        <order>1000</order>
+        <role display_value="x_26578_strava.user" name="x_26578_strava.user">ec57fc3d4feb03008928a7d18110c758</role>
+        <sys_class_name>sys_embedded_help_role</sys_class_name>
+        <sys_created_by>madeleonardis</sys_created_by>
+        <sys_created_on>2018-01-09 16:24:40</sys_created_on>
+        <sys_id>6057fc3d4feb03008928a7d18110c75b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>ec57fc3d4feb03008928a7d18110c758</sys_name>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sys_embedded_help_role_6057fc3d4feb03008928a7d18110c75b</sys_update_name>
+        <sys_updated_by>madeleonardis</sys_updated_by>
+        <sys_updated_on>2018-01-09 16:24:40</sys_updated_on>
+    </sys_embedded_help_role>
+</record_update>

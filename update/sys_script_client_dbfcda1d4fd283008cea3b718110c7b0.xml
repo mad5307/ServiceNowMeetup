@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="sys_script_client">
+    <sys_script_client action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <applies_extended>false</applies_extended>
+        <condition/>
+        <description/>
+        <field>type</field>
+        <global>true</global>
+        <messages/>
+        <name>Populate participants</name>
+        <order/>
+        <script><![CDATA[function onChange(control, oldValue, newValue, isLoading, isTemplate) {
+	if (newValue === '') {
+		return;
+	}
+
+	//Type appropriate comment here, and begin script below
+	var meetup = g_form.getValue('meetup_event');
+	var ajax = new GlideAjax('MeetupUtilAjax');
+	ajax.addParam('sysparm_name','getAttendeeIDs');
+	ajax.addParam('sysparm_eventid',meetup);
+	ajax.getXML(parseResponse);
+
+	function parseResponse(response) {
+		var answer = response.responseXML.documentElement.getAttribute("answer");
+		if(g_form.getValue('type') == 'new'){
+			g_form.setValue('participants',answer);
+		}else{
+			g_form.setValue('participants','');
+		}
+		
+	}
+}]]></script>
+        <sys_class_name>sys_script_client</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-11-07 07:15:12</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>dbfcda1d4fd283008cea3b718110c7b0</sys_id>
+        <sys_mod_count>14</sys_mod_count>
+        <sys_name>Populate participants</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sys_script_client_dbfcda1d4fd283008cea3b718110c7b0</sys_update_name>
+        <sys_updated_by>madeleonardis</sys_updated_by>
+        <sys_updated_on>2018-01-04 19:58:26</sys_updated_on>
+        <table>x_8080_meetup_actual_expenses</table>
+        <type>onChange</type>
+        <ui_type>10</ui_type>
+        <view/>
+    </sys_script_client>
+</record_update>

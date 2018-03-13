@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="Estimated Expenses" max_length="40" name="x_8080_meetup_expenses" type="collection">
+        <element attributes="omit_sys_original=true" label="Cost" max_length="20" name="cost" type="currency"/>
+        <element attributes="edge_encryption_enabled=true" choice="1" label="Cost type" mandatory="true" max_length="40" name="cost_type" type="string">
+            <choice>
+                <element label="Per person" sequence="0" value="person"/>
+                <element label="Per group" sequence="1" value="group"/>
+            </choice>
+        </element>
+        <element attributes="no_truncate=true,edge_encryption_enabled=true" label="Description" max_length="1000" name="description" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Name" max_length="40" name="name" type="string"/>
+        <element default="javascript:current.getTableName();" dynamic_default_value="b5cb83a85f220100a9ad2572f2b4773c" label="Class" max_length="80" name="sys_class_name" type="sys_class_name" use_dynamic_default="true"/>
+        <element label="Link" max_length="1024" name="url" type="url"/>
+        <element label="Event" max_length="32" name="u_event" reference="x_8080_meetup_meetup_events" type="reference"/>
+        <index name="index">
+            <element name="u_event"/>
+        </index>
+    </element>
+</database>

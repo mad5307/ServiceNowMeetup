@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category/>
+        <client_script><![CDATA[function($scope, $rootScope, $http, $window, $timeout, $location) {
+	/* widget controller */
+	var c = this;
+	$scope.moreInfo = function(eventIndex){
+		$window.open('/nav_to.do?uri=x_8080_meetup_meetup_events.do?sys_id='+c.data.eventList[eventIndex].eventID, '_blank');
+	};
+	$scope.showFinances = function(eventIndex){
+		$window.open('/nav_to.do?uri=x_8080_meetup_meetup_events.do?sys_id='+c.data.eventList[eventIndex].eventID, '_blank');
+	};
+
+	c.updateBreadcrumbs = function(){
+		var url = $location.search();
+		var BC = [{label: $scope.page.title, url: '?id=' + url.id}];
+
+		$timeout(function() {
+			$rootScope.$emit('sp.update.breadcrumbs', BC);
+		});
+
+		$timeout(function() {
+			$rootScope.$broadcast('sp.update.breadcrumbs', BC);
+		});
+	};
+
+	$scope.sendResponse = function(eventIndex, intent) {
+		var reqBody = {
+			"event" : c.data.eventList[eventIndex].eventID,
+			"user" : c.data.userID,
+			"intent" : intent
+		};
+		$http({
+			method : "POST",
+			url : "/api/x_8080_meetup/response",
+			headers : {"Content-type" : "application/json"},
+			data : reqBody
+		}).then(function success(response) {
+			$scope.data.eventList[eventIndex].response = response.data.result.actual;
+		}, function failure(response) {
+			console.log('sendResponse(): failure');
+		});
+	};
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.title {
+  float : left;
+  font-size : 18px;
+  font-weight: bold;
+}
+
+.cost {
+  float : right;
+  background-color:#428bca;
+  color:#fff;
+  border-radius:15px;
+  padding: 5px;
+}
+
+.btn-finance {
+    background-color: mediumpurple;
+    border-color: mediumpurple;
+  color:white;
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>meetup_event_list</id>
+        <internal>false</internal>
+        <link/>
+        <name>Meetup Event List</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+	/* populate the 'data' object */
+	/* e.g., data.table = $sp.getValue('table'); */
+	data.eventList = [];
+	data.userID = gs.getUserID();
+	var n = 0;
+	var today = new GlideDateTime();
+	var events = "";
+	
+	var inv = new GlideRecord('x_8080_meetup_m2m_invite');
+	inv.addQuery('user',data.userID);
+	inv.query();
+	while(inv.next()){
+		events = events+inv.meetup_events.sys_id+",";
+	}
+
+	data.user_events = events;
+
+	var e = new GlideRecord('x_8080_meetup_meetup_events');
+	e.addQuery('active',true);
+	e.addQuery('work_start','>=',today);
+	e.addQuery('sys_id','IN',events);
+	e.orderBy('work_start');
+	e.query();
+
+	while(e.next()){
+		var eObj = {};
+		eObj.eventID     = e.getValue('sys_id');
+		eObj.name        = e.getDisplayValue();
+		eObj.organizer   = e.assigned_to.getDisplayValue();
+		eObj.start       = e.work_start.getDisplayValue();
+		eObj.location    = e.location.getDisplayValue();
+		eObj.cost        = e.getDisplayValue('u_cost').split('$')[1];
+		eObj.index       = n;
+
+		var um = new MeetupUtil(e.getValue('sys_id'),data.userID);
+		eObj.response = um.getUserResponse();
+		data.eventList.push(eObj);
+		n++;
+
+	}
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-11-04 20:48:04</sys_created_on>
+        <sys_id>efaab1ec4fda03008cea3b718110c723</sys_id>
+        <sys_mod_count>47</sys_mod_count>
+        <sys_name>Meetup Event List</sys_name>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sp_widget_efaab1ec4fda03008cea3b718110c723</sys_update_name>
+        <sys_updated_by>madeleonardis</sys_updated_by>
+        <sys_updated_on>2018-01-09 15:07:50</sys_updated_on>
+        <template><![CDATA[<div>
+  <table class="table table-striped">
+    <tr ng-repeat="e in data.eventList">
+      <td>
+        <div class="title">
+          {{e.name}}
+        </div>
+        <div class="cost">
+          <div ng-if="e.cost == 0">
+            Free
+          </div>
+          <div ng-if="e.cost != 0">
+            {{e.cost | currency}}/pp
+          </div>
+        </div>
+        <div style="clear: both;"></div>
+        <div>
+          <i class="fa fa-clock-o"></i> {{e.start}}
+        </div>
+        <div>
+          <i class="fa fa-map-marker" aria-hidden="true"></i>
+          {{e.location}}
+        </div>
+        <div>
+          <i class="fa fa-user" aria-hidden="true"></i>
+          {{e.organizer}}
+        </div>
+        <div>
+          {{e.description}}
+        </div>
+        <button class="btn btn-success" ng-click="sendResponse(e.index, 'Going')">
+          <span ng-if="e.response == 'Going'">
+            <i class="fa fa-check" aria-hidden="true"></i>
+          </span>
+          <span ng-if="e.response == 'Stand by'">
+            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+          </span>
+          Going
+        </button>
+        <button class="btn btn-danger" ng-click="sendResponse(e.index, 'Not going')">
+          <span ng-if="e.response == 'Not going'">
+            <i class="fa fa-check" aria-hidden="true"></i>
+          </span>
+          Not Going
+        </button>
+        <div ng-if="e.response == 'Going'" style="display:inline-block">
+          <a ng-href="?id=meetup_event&event_id={{e.eventID}}"><button class="btn btn-finance" ng-click="c.updateBreadcrumbs('Meetup Even List','meetup_event_list')">
+            <span>
+              <i class="fa fa-usd" aria-hidden="true"></i>
+            </span>
+            Finances
+            </button>
+          </a>
+        </div>
+        <button class="btn btn-info" ng-click="moreInfo(e.index)">
+          More info
+        </button>
+      </td>
+    </tr>
+  </table>
+</div>]]></template>
+    </sp_widget>
+</record_update>

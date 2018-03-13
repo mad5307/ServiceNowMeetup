@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_8080_meetup.MeetupUtil</api_name>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>MeetupUtil</name>
+        <script><![CDATA[var MeetupUtil = Class.create();
+MeetupUtil.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+	initialize: function(eventID, userID) {
+		this.inviteTable = 'x_8080_meetup_m2m_invite';
+		this.eventTable = 'x_8080_meetup_meetup_events';
+		this.eventID = eventID;
+		this.userID = userID;
+	},
+
+
+	/*
+     * determine if the user is already on the invite for this event
+	 *
+	 * @param none
+	 * @return sys_id of invite record (null=not found)
+	 *
+     */
+	userOnList : function() {
+		var invite = new GlideRecord(this.inviteTable);
+		invite.addQuery('user', this.userID);
+		invite.addQuery('meetup_events', this.eventID);
+		invite.query();
+		if (invite.next()) {
+			return invite.sys_id;
+		}
+		return;
+	},
+
+	/*
+	 * get the user's response if there is one
+	 *
+	 * @param none
+	 * @return choice list option
+	 *
+	 */
+	getUserResponse : function() {
+
+		var invite = new GlideRecord(this.inviteTable);
+		invite.addQuery('user', this.userID);
+		invite.addQuery('meetup_events', this.eventID);
+		invite.query();
+
+		if (invite.next()) {
+			return invite.getValue('response');
+		}
+
+		return '';
+	},
+
+	/*
+     * make a new invite for this user
+	 *
+	 * @param string (Going, Not going)
+	 * @return string (Going, Not going, Stand by)
+	 * 
+     */
+	createInvite : function(response) {
+		var invite = new GlideRecord(this.inviteTable);
+		invite.newRecord();
+		invite.user = this.userID;
+		invite.meetup_events = this.eventID;
+		if (response == 'Going') {
+			var currentCap = this._currentCapacity();
+			var eventCap = parseInt(this._eventCapacity(), 10);
+			if (currentCap >= eventCap && eventCap > 0) {
+				response = 'Stand by';
+			}
+		}
+		invite.response = response;
+		invite.insert();
+		return response;
+	},
+
+	/*
+	 * update an existing invite record
+	 *
+	 * @param sys_id - sys_id of the invite record to update
+	 * @param string - intended response (Going, Not going)
+	 * @return string - actual response (Going, Not going, Stand by)
+	 *
+	 */
+	updateInvite : function(inviteID, response) {
+		var invite = new GlideRecord(this.inviteTable);
+		if (!inviteID) {
+			invite.addQuery('user', this.userID);
+			invite.addQuery('meetup_events', this.eventID);
+			invite.query();
+			invite.next();
+		} else {
+			invite.get(inviteID);
+		}
+		if (response == 'Going') {
+			var currentCap = this._currentCapacity();
+			var eventCap = this._eventCapacity();
+
+			if (currentCap >= eventCap && eventCap > 0) {
+				response = 'Stand by';
+			}
+		}
+		invite.response = response;
+		invite.update();
+		return response;
+	},
+
+	/*
+	 * get the current capacity for this event
+	 *
+	 * @param none
+	 * @return number - number of people also going to this event
+	 *
+	 */
+	_currentCapacity : function() {
+		var currentCap = 0;
+		var ga = new GlideAggregate(this.inviteTable);
+		ga.addQuery('meetup_events', this.eventID);
+		ga.addQuery('response', 'Going');
+		ga.addAggregate('COUNT');
+		ga.query();
+		if (ga.next()) {
+			currentCap = ga.getAggregate('COUNT');
+		}
+		return parseInt(currentCap, 10);
+	},
+
+	/*
+	 * get capacity count for the event
+	 *
+	 * @param none
+	 * @return number - value of the event's max_persons
+	 *
+	 */
+	_eventCapacity : function() {
+		var e = new GlideRecord(this.eventTable);
+		e.get(this.eventID);
+		return parseInt(e.getValue('max_persons'), 10);
+	},
+
+	/*
+	* get a list of email addresses to send reminders for this event
+	*
+	* @param none
+	* @return string - comma separated list of email addresses
+	*
+	*/
+	getAttendeeList : function() {
+		var userList = [];
+		var invite = new GlideRecord(this.inviteTable);
+		invite.addQuery('meetup_events', this.eventID);
+		invite.addQuery('response', 'Going');
+		invite.query();
+		while(invite.next()){
+			userList.push(invite.user.email);
+		}
+
+		return userList.join(',');
+	},
+
+	getAttendeeArray : function() {
+		var userList = [];
+		var invite = new GlideRecord(this.inviteTable);
+		invite.addQuery('meetup_events', this.eventID);
+		invite.addQuery('response','!=', 'Not going');
+		invite.query();
+		while(invite.next()){
+			userList.push(invite.user.sys_id.toString());
+		}
+
+		return "sys_idIN"+userList.toString();
+	},
+
+	createPayment : function(t) {
+		var transaction = JSON.parse(t);
+		var user = this._getUserSysID(transaction.from);
+		var paid_to = this._getUserSysID(transaction.to);
+		try{
+			var pay = new GlideRecord('x_8080_meetup_actual_expenses');
+			pay.initialize();
+			pay.meetup_event = this.eventID;
+			pay.type = 'payment';
+			pay.user = user;
+			pay.paid_to = paid_to;
+			pay.cost = parseFloat(transaction.amount).toFixed(2);
+			pay.short_description = "Payment";
+			pay.insert();
+			return 'Success';
+		}catch(e){
+			return e;
+		}
+	},
+
+	_getUserSysID : function(correlation_id){
+		var usr = new GlideRecord('x_8080_meetup_m2m_invite');
+		usr.addQuery('correlation_id',correlation_id);
+		usr.query();
+		if(usr.next()){
+			return usr.user.sys_id;
+		}else{
+			return null;
+		}
+	},
+	type: 'MeetupUtil'
+});]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-11-04 20:51:20</sys_created_on>
+        <sys_id>7ac1f0684f5a03008cea3b718110c720</sys_id>
+        <sys_mod_count>44</sys_mod_count>
+        <sys_name>MeetupUtil</sys_name>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sys_script_include_7ac1f0684f5a03008cea3b718110c720</sys_update_name>
+        <sys_updated_by>madeleonardis</sys_updated_by>
+        <sys_updated_on>2018-01-05 18:33:49</sys_updated_on>
+    </sys_script_include>
+</record_update>

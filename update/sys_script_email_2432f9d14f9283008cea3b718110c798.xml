@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_script_email">
+    <sys_script_email action="INSERT_OR_UPDATE">
+        <name>meetup_body_header</name>
+        <new_lines_to_html>false</new_lines_to_html>
+        <script><![CDATA[(function runMailScript(/* GlideRecord */ current, /* TemplatePrinter */ template,
+/* Optional EmailOutbound */ email, /* Optional GlideRecord */ email_action,
+/* Optional GlideRecord */ event) {
+	
+	var user = new GlideRecord('sys_user');
+	user.get(event.user_id);
+	var from = user.getDisplayValue()+" <dev13045@service-now.com>";
+	email.setFrom(from);
+	email.setSubject(current.short_description+": Update from "+user.first_name);
+})(current, template, email, email_action, event);]]></script>
+        <sys_class_name>sys_script_email</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-11-07 04:06:54</sys_created_on>
+        <sys_id>2432f9d14f9283008cea3b718110c798</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>meetup_body_header</sys_name>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sys_script_email_2432f9d14f9283008cea3b718110c798</sys_update_name>
+        <sys_updated_by>madeleonardis</sys_updated_by>
+        <sys_updated_on>2018-01-09 15:46:21</sys_updated_on>
+    </sys_script_email>
+</record_update>

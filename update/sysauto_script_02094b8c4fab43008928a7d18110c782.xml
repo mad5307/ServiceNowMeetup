@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sysauto_script">
+    <sysauto_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <condition/>
+        <conditional>false</conditional>
+        <name>Check Amount Owed</name>
+        <run_as display_value="Marco De Leonardis">6816f79cc0a8016401c5a33be04be441</run_as>
+        <run_as_tz/>
+        <run_dayofmonth>1</run_dayofmonth>
+        <run_dayofweek>1</run_dayofweek>
+        <run_period/>
+        <run_start>2018-01-04 16:31:55</run_start>
+        <run_time>1970-01-01 05:01:00</run_time>
+        <run_type>weekly</run_type>
+        <script><![CDATA[gs.info('Starting job to update amount owed '+ new GlideDateTime().getDisplayValue());
+var current = new GlideRecord('x_8080_meetup_meetup_events');
+current.addQuery('state','!=',0);
+current.addQuery('state','!=',11);
+current.addQuery('state','!=',5);
+current.query();
+while(current.next()){
+	gs.info(current.short_description+" has a correlation id = "+current.correlation_id);
+	var sp = new SplitwiseUtil();
+	var r = JSON.parse(sp.getGroup(current.correlation_id));
+	var debts = r.group.simplified_debts;
+	var users = r.group.members;
+	for(var i = 0; i<users.length; i++){
+		updateUser(current.sys_id,users[i]);
+	}
+}
+gs.info('Done job to update amount owed '+ new GlideDateTime().getDisplayValue());
+
+function updateUser(group,user){
+	gs.info("User being updated :: "+JSON.stringify(user));
+	var gr = new GlideRecord('x_8080_meetup_m2m_invite');
+	gr.addQuery('meetup_events',group);
+	gr.addQuery('correlation_id',user.id);
+	gr.query();
+	if(gr.next()){
+		gs.info(gr.user.getDisplayValue()+" is being updated");
+		gs.info("Splitwise amount "+user.balance[0].amount);
+		var amount = parseInt(user.balance[0].amount);
+		if(amount<0){
+			amount = amount*-1;
+			gs.info("Amount parsed "+amount);
+			gr.owes = amount;
+		}else{
+			gr.owes = 0;
+		}
+		gr.update();
+		gs.info(gr.user.getDisplayValue()+" owes "+gr.owes);
+	}
+}]]></script>
+        <sys_class_name>sysauto_script</sys_class_name>
+        <sys_created_by>madeleonardis</sys_created_by>
+        <sys_created_on>2018-01-04 16:46:45</sys_created_on>
+        <sys_id>02094b8c4fab43008928a7d18110c782</sys_id>
+        <sys_mod_count>14</sys_mod_count>
+        <sys_name>Check Amount Owed</sys_name>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sysauto_script_02094b8c4fab43008928a7d18110c782</sys_update_name>
+        <sys_updated_by>madeleonardis</sys_updated_by>
+        <sys_updated_on>2018-01-04 17:18:03</sys_updated_on>
+        <upgrade_safe>false</upgrade_safe>
+    </sysauto_script>
+</record_update>

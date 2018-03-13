@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_ui_page">
+    <sys_ui_page action="INSERT_OR_UPDATE">
+        <category>general</category>
+        <client_script><![CDATA[var app = angular.module('angular_app',['sn.common','sn.$sp','ngSanitize','sn.common','ngAnimate','ngRoute','ae-datetimepicker','sn.glideAjax']);
+app.run(function($http){
+	$http.defaults.headers.common['X-UserToken'] = window.g_ck;
+});
+app.controller('myCtrl',
+			   function($scope, $http, $timeout, $interval, GlideAjax){
+	var c = this;
+	var ajax = new GlideAjax();
+
+	c.data={
+		select:null,
+		select2:null,
+		required:false
+	};
+
+	$scope.initiateLoginWindow = function(){
+
+		var oauthRequestorSysId = "${gs.getUserID()}";
+		var oauthProfileId = "a58832d94f1683008cea3b718110c71c";
+		var grantType = "authorization_code";
+		var oauthRequestorContext = 'sys_rest_message';
+
+		var oauth_initiator_url = '';
+		if (grantType === 'password') {
+			oauth_initiator_url = '/oauth_password_input.do' +
+				'?sysparm_oauth_requestor_context=' + oauthRequestorContext +
+				'&sysparm_oauth_requestor=' + oauthRequestorSysId +
+				'&sysparm_oauth_provider_profile=' + oauthProfileId;
+
+		} else if (grantType === 'client_credentials') {
+			oauth_initiator_url = '/oauth_client_credentials_input.do' +
+				'?sysparm_oauth_requestor_context=' + oauthRequestorContext +
+				'&sysparm_oauth_requestor=' + oauthRequestorSysId +
+				'&sysparm_oauth_provider_profile=' + oauthProfileId;
+
+		} else if (grantType === 'authorization_code') {
+			oauth_initiator_url = '/oauth_initiator.do' +
+				'?oauth_requestor_context=' + oauthRequestorContext +
+				'&oauth_requestor=' + oauthRequestorSysId +
+				'&oauth_provider_profile=' + oauthProfileId +
+				'&response_type=code';
+
+			c.data.oauth_initiator_url = oauth_initiator_url;
+
+		} else {
+			alert('Unsupported OAuth grant type \'' + grantType + '\'.');
+			return;
+		}
+
+		window.open(oauth_initiator_url, '', 'height=500,width=800'); // pops up window
+		return;
+	};
+
+
+
+});]]></client_script>
+        <description>AngularJS application in ServiceNow</description>
+        <direct>true</direct>
+        <endpoint>x_8080_meetup_AuthorizeUser.do</endpoint>
+        <html><![CDATA[$[&lt;!DOCTYPE HTML&gt;]
+<html lang="en">
+	<g:evaluate object="true">
+		var g_ck = gs.getSession().getSessionToken();
+	</g:evaluate>
+	<head>
+		<script>
+			// Get user token for ServiceNow API requests
+			window.g_ck = "$[g_ck]";
+		</script>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"></meta>
+		
+		<!-- Bootstrap CSS -->
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"></link>
+		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"></link>
+
+		<!-- ServiceNow CSS -->
+		<link rel="stylesheet" href="/styles/css_includes_$sp.css"></link>
+		<link rel="stylesheet" href="/styles/scss/sp-bootstrap.scss"></link>
+
+		<!-- CUSTOM CSS ui-page-styles -->
+		<g:call function="u_include_stylesheet" stylesheet_id="cefb17e64f0a87008cea3b718110c7d1" />
+	</head>
+
+	<body ng-app="angular_app" ng-controller="myCtrl as c" class="container">
+		<div class="main ng-cloak">
+			<ng-form style="width:100%" name="templateForm" novalidate="true">
+				<!-- TWO COLUMN LAYOUT -->
+				<div class="row" style="margin-bottom:10px">
+					<!--************-->
+					<!--  COLUMN 1  -->
+					<!--************-->
+					<div class="vsplit col-sm-6">
+						<button ng-click="initiateLoginWindow()" class="btn btn-success">
+							<span class="fa fa-github"></span> Sign in to Splitwise
+						</button>
+					</div>
+
+
+					<!--************-->
+					<!--  COLUMN 2  -->
+					<!--************-->
+					<div class="vsplit col-sm-6">
+						<p>{{c.data.oauth_initiator_url}}</p>
+						<p>${gs.getUserID()}</p>
+						<p>https://secure.splitwise.com/oauth/authorize?&amp;response_type=code&amp;redirect_uri=https://dev17216.service-now.com/oauth_redirect.do&amp;client_id=1Qm744p9LxjWLgH5HYC6VW0MmmMj4SQPSFbK6mOc</p>
+						<hr/>
+						<p>https://secure.splitwise.com/oauth/authorize?&amp;response_type=code&amp;redirect_uri=https://dev17216.service-now.com/oauth_redirect.do&amp;client_id=1Qm744p9LxjWLgH5HYC6VW0MmmMj4SQPSFbK6mOc</p>
+					</div>
+				</div>
+
+			</ng-form>
+		</div>
+
+
+		<br/>
+		<div class="col-xs-12">
+			<pre>Scope: {{c | json}} </pre>
+		</div>
+	</body>
+
+
+	<!--********************-->
+	<!--  Load all scripts  -->
+	<!--********************-->
+	<script type="javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+	<script type="text/javascript" src="/scripts/js_includes_sp.jsx"></script>
+	<script type="text/javascript" src="/scripts/sn/common/js_includes_common.jsx"></script>
+	<script type="text/javascript" src="/scripts/app.$sp/app.config.js"></script>
+	<script type="text/javascript" src="/scripts/app.$sp/service.spUtil.js"></script>
+	<script type="text/javascript" src="/scripts/app.$sp/directive.spChoiceList.js"></script>
+	<script type="text/javascript" src="/scripts/app.$sp/directive.spDatePicker.js"></script>
+	<script type="text/javascript" src="/scripts/sn/common/clientScript/glideFormFactory.js"></script>
+	<script type="text/javascript" src="/scripts/sn/common/clientScript/angular/glideUserFactory.js"></script>
+	<script type="text/javascript" src="/scripts/sn/common/clientScript/glideRequest.js"></script>
+	<script type="text/javascript" src="/scripts/sn/common/clientScript/glideAjax.js"></script>
+	<script type="text/javascript" src="/scripts/sn/common/clientScript/glideRecord.js"></script>
+	<script type="text/javascript" src="/scripts/sn/common/clientScript/glideUser.js"></script>
+	<script type="text/javascript" src="/scripts/sn/common/clientScript/angular/glideAjaxFactory.js"></script>
+	<script language="javascript" src="service.sn-glideAjax.jsdbx"></script>
+	<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+	<script src="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/4.17.37/build/js/bootstrap-datetimepicker.min.js"></script>
+	<script src="https://rawgit.com/atais/angular-eonasdan-datetimepicker/0.3.8/dist/angular-eonasdan-datetimepicker.min.js"></script>
+	<script data-description="set sp.dependencies">
+		(function() {
+		angular.module('sp.dependencies', []);
+		})();
+	</script>
+
+</html>
+]]></html>
+        <name>AuthorizeUser</name>
+        <processing_script/>
+        <sys_class_name>sys_ui_page</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-11-13 04:13:24</sys_created_on>
+        <sys_id>f85de01f4f9a83008cea3b718110c74c</sys_id>
+        <sys_mod_count>18</sys_mod_count>
+        <sys_name>AuthorizeUser</sys_name>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sys_ui_page_f85de01f4f9a83008cea3b718110c74c</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-11-13 05:44:58</sys_updated_on>
+    </sys_ui_page>
+</record_update>

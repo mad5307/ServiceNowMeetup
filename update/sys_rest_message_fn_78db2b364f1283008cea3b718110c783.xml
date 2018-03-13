@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_rest_message_fn">
+    <sys_rest_message_fn action="INSERT_OR_UPDATE">
+        <authentication_type>inherit_from_parent</authentication_type>
+        <basic_auth_password/>
+        <basic_auth_profile/>
+        <basic_auth_user/>
+        <content>users__0__user_id=1175876&amp;users__0__paid_share=1240.30&amp;users__0__owed_share=413.43&amp;users__1__user_id=11247454&amp;users__1__paid_share=0.00&amp;users__1__owed_share=413.43&amp;users__2__user_id=11246857&amp;users__2__paid_share=0.00&amp;users__2__owed_share=413.43</content>
+        <function_name>Create Expense</function_name>
+        <http_method>post</http_method>
+        <lock>false</lock>
+        <oauth2_profile/>
+        <protocol_name/>
+        <qualified_name>Splitwise API [ Create Expense ]</qualified_name>
+        <rest_endpoint>https://secure.splitwise.com/api/v3.0/create_expense</rest_endpoint>
+        <rest_message display_value="Splitwise API">bb7776994f1683008cea3b718110c7b5</rest_message>
+        <sys_class_name>sys_rest_message_fn</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-11-12 04:52:12</sys_created_on>
+        <sys_id>78db2b364f1283008cea3b718110c783</sys_id>
+        <sys_mod_count>8</sys_mod_count>
+        <sys_name>Create Expense</sys_name>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sys_rest_message_fn_78db2b364f1283008cea3b718110c783</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-11-12 17:18:55</sys_updated_on>
+        <use_basic_auth>false</use_basic_auth>
+        <use_mid_server/>
+        <use_mutual_auth>false</use_mutual_auth>
+    </sys_rest_message_fn>
+</record_update>

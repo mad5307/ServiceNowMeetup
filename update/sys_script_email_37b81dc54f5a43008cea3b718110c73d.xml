@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_script_email">
+    <sys_script_email action="INSERT_OR_UPDATE">
+        <name>weather_forecast_2</name>
+        <new_lines_to_html>false</new_lines_to_html>
+        <script><![CDATA[(function runMailScript(/* GlideRecord */ current, /* TemplatePrinter */ template,
+/* Optional EmailOutbound */ email, /* Optional GlideRecord */ email_action,
+/* Optional GlideRecord */ event) {
+	
+	var weather = new wundergroundUtil();
+	var location = weather.lookupLocation(current.location.latitude,current.location.longitude);
+	var forecast = weather.get10DayForecast(location.city,location.state);
+	var daily = forecast.simpleforecast.forecastday;
+	var dailyText = forecast.txt_forecast.forecastday;
+	
+	var i = 2;
+	
+	template.print('<h3>The forecast for '+location.city+', '+location.state+'<h3>');
+	template.print([
+	'<div class="datagrid" style="font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden; border: 1px solid #128fe8; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px;overflow-x:scroll;width:100%;">',
+	'<table style="border-collapse: collapse; min-width:770px;height:auto;">',
+	'<thead>',
+	'<tr>'].join(''));
+	
+	// PRINT DAY AS HEADER ROW
+	for(i = 2;i<daily.length;i++){
+		template.print('<th style="padding: 3px 10px;background-color:#128fe8; color:#FFFFFF; font-size: 15px; font-weight: bold; border-left: 1px solid #128fe8; border: none;width:10%;text-align:center;">'+daily[i].date.weekday_short+" "+daily[i].date.month+"/"+daily[i].date.day+'</th>');
+	}
+	template.print(['</tr>',
+	'</thead>',
+	'<tbody>'].join(''));
+	
+	
+	// PRINT HIGH AND LOW TEMPERATURE
+	template.print('<tr>');
+	for(i = 2; i < daily.length; i++){
+		template.print('<td style="border-left: none;padding: 3px 10px; color: #000000; border-left: 1px solid #CFCFCF;font-size: 12px;font-weight: normal;vertical-align: middle;text-align:center;"><span style="color:red">'+daily[i].high.fahrenheit+'</span> | <span style="color:blue">'+daily[i].low.fahrenheit+'</span>&deg;F</td>');
+		
+	}
+	template.print('</tr>');
+	
+	// PRINT IMAGE ICON
+	template.print('<tr>');
+	for(i = 2; i < daily.length; i++){
+		template.print('<td style="border-left: none;padding: 3px 10px; color: #000000; border-left: 1px solid #CFCFCF;font-size: 12px;font-weight: normal;vertical-align: middle;text-align:center;"><img src="https://icons.wxug.com/i/c/i/'+daily[i].icon+'.gif" style="vertical-align: middle;width: 50px;padding-right: 10px;"></img></td>');
+		
+	}
+	template.print('</tr>');
+	
+	// PRINT WEATHER FORECAST
+	template.print('<tr>');
+	for(i = 2; i < daily.length; i++){
+		template.print('<td style="border-left: none;padding: 3px 10px; color: #000000; border-left: 1px solid #CFCFCF;font-size: 12px;font-weight: normal;vertical-align: top;text-align:left;">'+dailyText[i*2].fcttext+'</td>');
+		
+	}
+	template.print('</tr>');
+	
+	
+	// PRINT PRECIPITATION
+	template.print('<tr>');
+	for(i = 2; i < daily.length; i++){
+		if(dailyText[i*2].fcttext.indexOf('snow')>-1){
+			template.print('<td style="border-left: none;padding: 3px 10px; color: #000000; border-left: 1px solid #CFCFCF;font-size: 12px;font-weight: normal;vertical-align: top;text-align:center;"><img src="https://www.shareicon.net/data/12x12/2015/12/30/695261_weather_512x512.png" style="width:10px;padding-right:5px;"></img>'+daily[i]['snow_allday']['in']+' in</td>');
+		}
+		else{
+			template.print('<td style="border-left: none;padding: 3px 10px; color: #000000; border-left: 1px solid #CFCFCF;font-size: 12px;font-weight: normal;vertical-align: top;text-align:center;"><img src="https://www.shareicon.net/data/12x12/2016/03/30/741986_drop_512x512.png" style="width:10px;padding-right:5px;"></img>'+daily[i]['qpf_allday']['in']+' in</td>');
+		}
+	}
+	template.print('</tr>');
+	
+	// PRINT WEATHERUNDERGROUND
+	template.print('<tr><td style="padding: 3px 10px; color: #000000; border: 1px solid #CFCFCF;font-size: 10px;font-weight: normal;vertical-align: top;text-align:left;" colspan="'+daily.length+'"><img src="https://icons.wxug.com/logos/PNG/wundergroundLogo_4c.png" style="width:20px;vertical-align:middle"></img>Weather provided by Weather Underground</td></tr>');
+	
+	
+	template.print(['</tbody>',
+	'</table>',
+	'</div>',
+	"<tr>"
+	].join(''));
+	
+})(current, template, email, email_action, event);]]></script>
+        <sys_class_name>sys_script_email</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-11-06 07:36:47</sys_created_on>
+        <sys_id>37b81dc54f5a43008cea3b718110c73d</sys_id>
+        <sys_mod_count>18</sys_mod_count>
+        <sys_name>weather_forecast_2</sys_name>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sys_script_email_37b81dc54f5a43008cea3b718110c73d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-11-06 08:35:33</sys_updated_on>
+    </sys_script_email>
+</record_update>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="sysevent_in_email_action">
+    <sysevent_in_email_action action="INSERT_OR_UPDATE">
+        <action>record_action</action>
+        <active>true</active>
+        <assignment_operator/>
+        <condition_script/>
+        <description/>
+        <event_name>email.read</event_name>
+        <filter_condition/>
+        <from/>
+        <name>Update Meetup Event</name>
+        <order>0</order>
+        <reply_email/>
+        <required_roles>x_8080_meetup.user</required_roles>
+        <script><![CDATA[(function runAction(/*GlideRecord*/ current, /*GlideRecord*/ event, /*EmailWrapper*/ email, /*ScopedEmailLogger*/ logger, /*EmailClassifier*/ classifier) {
+	
+	if (current.getTableName() == "x_8080_meetup_meetup_events") {
+		current.work_notes = email.body_text;
+		current.setWorkflow(false);
+		current.update();
+	}
+})(current, event, email, logger, classifier);]]></script>
+        <stop_processing>true</stop_processing>
+        <sys_class_name>sysevent_in_email_action</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-11-06 05:00:54</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>99d230814f5a43008cea3b718110c78c</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>Update Meetup Event</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sysevent_in_email_action_99d230814f5a43008cea3b718110c78c</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-11-06 05:25:15</sys_updated_on>
+        <table>x_8080_meetup_meetup_events</table>
+        <template/>
+        <type>reply</type>
+    </sysevent_in_email_action>
+</record_update>

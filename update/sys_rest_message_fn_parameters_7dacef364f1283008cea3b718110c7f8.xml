@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_rest_message_fn_parameters">
+    <sys_rest_message_fn_parameters action="INSERT_OR_UPDATE">
+        <name>description</name>
+        <rest_message_function display_value="Create Expense">78db2b364f1283008cea3b718110c783</rest_message_function>
+        <sys_class_name>sys_rest_message_fn_parameters</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-11-12 04:52:21</sys_created_on>
+        <sys_id>7dacef364f1283008cea3b718110c7f8</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>description</sys_name>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sys_rest_message_fn_parameters_7dacef364f1283008cea3b718110c7f8</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-11-12 17:21:21</sys_updated_on>
+        <type>string</type>
+        <value>Created from SNOW &gt;1K</value>
+    </sys_rest_message_fn_parameters>
+</record_update>

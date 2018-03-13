@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_8080_meetup.SplitwiseUtil</api_name>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>SplitwiseUtil</name>
+        <script><![CDATA[var SplitwiseUtil = Class.create();
+SplitwiseUtil.prototype = {
+	initialize: function(eventID, userID) {
+		this.inviteTable = 'x_8080_meetup_m2m_invite';
+		this.eventTable = 'x_8080_meetup_meetup_events';
+		this.profile = 'a58832d94f1683008cea3b718110c71c';
+		this.currentUser = gs.getUserID();
+		this.eventID = eventID;
+		this.userID = userID;
+	},
+
+	// Creates a new expense group in Splitwise when a meetup is created
+	createGroup: function(){
+		var current = new GlideRecord(this.eventTable);
+		current.get(this.eventID);
+
+		try {
+			var r = new sn_ws.RESTMessageV2('x_8080_meetup.Splitwise API', 'Create Expense Group');
+			r.setStringParameterNoEscape('name', current.short_description.toString());
+			r.setStringParameterNoEscape('group_type', '');
+
+			//override authentication profile
+			//authentication type ='basic'/ 'oauth2'
+			//r.setAuthentication(authentication type, profile name);
+
+			var resp = r.execute();
+			var responseBody = resp.getBody();
+			var httpStatus = resp.getStatusCode();
+			var responseObj = JSON.parse(responseBody);
+
+			return responseBody;
+		}
+		catch(ex) {
+			var message = ex.getMessage();
+			gs.info(message,"SplitwiseUtil");
+		}
+	},
+
+	// Adds a member to group when user is going to event
+	addMember: function(group){
+		var user = new GlideRecord('sys_user');
+		user.get(this.userID);
+
+		try {
+			var r = new sn_ws.RESTMessageV2('x_8080_meetup.Splitwise API', 'Create Group Member');
+			//this._applyToken(r);
+
+			r.setStringParameterNoEscape('group_id', group);
+			//r.setStringParameterNoEscape('email', user.email);
+			r.setStringParameterNoEscape('first_name', user.first_name);
+			r.setStringParameterNoEscape('last_name', user.last_name);
+
+			//override authentication profile
+			//authentication type ='basic'/ 'oauth2'
+			//r.setAuthentication(authentication type, profile name);
+
+			var resp = r.execute();
+			var responseBody = resp.getBody();
+			var httpStatus = resp.getStatusCode();
+
+			return responseBody;
+		}
+		catch(ex) {
+			var message = ex.getMessage();
+			gs.info(message,"SplitwiseUtil");
+		}
+	},
+
+	// Remove a member of a group when no longer invited
+	removeMember: function(id,group){
+		var current = new GlideRecord(this.eventTable);
+		current.get(this.eventID);
+		try {
+			var r = new sn_ws.RESTMessageV2('x_8080_meetup.Splitwise API', 'Remove from group');
+			//this._applyToken(r);
+			r.setStringParameterNoEscape('group_id', group);
+			r.setStringParameterNoEscape('user_id', id);
+
+			//override authentication profile
+			//authentication type ='basic'/ 'oauth2'
+			//r.setAuthentication(authentication type, profile name);
+
+			var resp = r.execute();
+			var responseBody = resp.getBody();
+			var httpStatus = resp.getStatusCode();
+		}
+		catch(ex) {
+			var message = ex.getMessage();
+		}
+	},
+
+	// Get group information
+	getGroup: function(groupID){
+
+		try {
+			var r = new sn_ws.RESTMessageV2('x_8080_meetup.Splitwise API', 'Get group');
+			//this._applyToken(r);
+			r.setStringParameterNoEscape('id', groupID);
+
+			var resp = r.execute();
+			var responseBody = resp.getBody();
+			var httpStatus = resp.getStatusCode();
+
+			return responseBody;
+		}
+		catch(ex) {
+			var message = ex.getMessage();
+		}
+	},
+
+	// Add existing user to group
+	addToGroup: function(userID,groupID){
+		try { 
+			var r = new sn_ws.RESTMessageV2('x_8080_meetup.Splitwise API', 'Add to Group');
+			r.setStringParameterNoEscape('user_id', userID);
+			r.setStringParameterNoEscape('group_id', groupID);
+
+			var response = r.execute();
+			var responseBody = response.getBody();
+			var httpStatus = response.getStatusCode();
+			var returnText = "";
+			
+			if(responseBody.success){
+				returnText = "User added to Splitwise group!";
+			}else{
+				returnText = responseBody.errors.base[0];
+			}
+			
+			return returnText;
+		}
+		catch(ex) {
+			var message = ex.getMessage();
+		}
+	},
+
+	createExpense: function(group,cost,description,category,body){
+		try {
+			var r = new sn_ws.RESTMessageV2('x_8080_meetup.Splitwise API', 'Create Expense');
+			//this._applyToken(r);
+
+			r.setStringParameterNoEscape('group_id', group);
+			r.setStringParameterNoEscape('cost', cost);
+			r.setStringParameterNoEscape('description', description);
+			r.setStringParameterNoEscape('category', category);
+			r.setStringParameterNoEscape('payment',false);
+			// r.setStringParameterNoEscape('date', '');
+			r.setRequestBody(body);
+
+			//override authentication profile
+			//authentication type ='basic'/ 'oauth2'
+			//r.setAuthentication(authentication type, profile name);
+
+			var resp = r.execute();
+			var responseBody = resp.getBody();
+			var httpStatus = resp.getStatusCode();
+
+			return responseBody;
+		}
+		catch(ex) {
+			var message = ex.getMessage();
+		}
+	},
+
+	createPayment: function(group,cost,description,category,body){
+		try {
+			var r = new sn_ws.RESTMessageV2('x_8080_meetup.Splitwise API', 'Create Expense');
+			//this._applyToken(r);
+
+			r.setStringParameterNoEscape('group_id', group);
+			r.setStringParameterNoEscape('cost', cost);
+			r.setStringParameterNoEscape('description', description);
+			r.setStringParameterNoEscape('category', category);
+			r.setStringParameterNoEscape('payment',true);
+			// r.setStringParameterNoEscape('date', '');
+			r.setRequestBody(body);
+
+			//override authentication profile
+			//authentication type ='basic'/ 'oauth2'
+			//r.setAuthentication(authentication type, profile name);
+
+			var resp = r.execute();
+			var responseBody = resp.getBody();
+			var httpStatus = resp.getStatusCode();
+
+			return responseBody;
+		}
+		catch(ex) {
+			var message = ex.getMessage();
+		}
+	},
+
+	updateExpense: function(expenseID,group,cost,description,category,body){
+
+		try {
+			var r = new sn_ws.RESTMessageV2('x_8080_meetup.Splitwise API', 'Update Exense');
+			//this._applyToken(r);
+			r.setStringParameterNoEscape('expense_id', expenseID);
+			r.setStringParameterNoEscape('group_id', group);
+			r.setStringParameterNoEscape('cost', cost);
+			r.setStringParameterNoEscape('description', description);
+			r.setStringParameterNoEscape('category', category);
+			//r.setStringParameterNoEscape('date', '');
+			r.setRequestBody(body);
+
+			//override authentication profile
+			//authentication type ='basic'/ 'oauth2'
+			//r.setAuthentication(authentication type, profile name);
+
+			var resp = r.execute();
+			var responseBody = resp.getBody();
+			var httpStatus = resp.getStatusCode();
+
+			return responseBody;
+		}
+		catch(ex) {
+			var message = ex.getMessage();
+		}
+	},
+
+	updateBalances: function(groupID){
+		var groupResp = this.getGroup(groupID);
+		var groupObj = JSON.parse(groupResp);
+		var members = groupObj.group.members;
+
+		var inv = new GlideRecord('x_8080_meetup_m2m_invite');
+		inv.addQuery('meetup_events',this.eventID);
+		inv.query();
+		while(inv.next()){
+			var hasPaid = 0;
+			// Paid For Items
+			var exp = new GlideRecord('x_8080_meetup_actual_expenses');
+			exp.addQuery('user',inv.user);
+			exp.addQuery('meetup_event',this.eventID);
+			exp.query();
+			while(exp.next()){
+				hasPaid = Number(hasPaid) + Number(exp.cost);
+			}
+
+			// Repaid
+			exp = new GlideRecord('x_8080_meetup_actual_expenses');
+			exp.addQuery('paid_to',inv.user);
+			exp.addQuery('meetup_event',this.eventID);
+			exp.addQuery('type','payment');
+			exp.query();
+			while(exp.next()){
+				hasPaid = Number(hasPaid) - Number(exp.cost);
+			}
+
+			for(var i = 0; i < members.length; i++){
+				var bal = members[i].balance[0];
+				if(inv.correlation_id.toString() == members[i].id.toString()){
+					if(bal.amount <0){
+						inv.owes = bal.amount*-1;
+					}else{
+						inv.owes = 0;
+					}
+					inv.paid = parseFloat(hasPaid);
+					inv.setWorkflow(false);
+					inv.autoSysFields(false);
+					inv.update();
+					break;
+
+				}
+			}
+		}
+	},
+
+	getToken: function(){
+		var gr = new GlideRecord('oauth_credential');
+		gr.addQuery('oauth_requestor_profile.oauth_entity_profile',this.profile);
+		gr.addQuery('user',this.currentUser);
+		gr.query();
+		if(gr.next()){
+			return gr.getValue('token');
+		}
+	},
+
+	/*
+	_applyToken: function(rm){
+		var client = new sn_auth.GlideOAuthClient();
+		var t = client.getToken('6816f79cc0a8016401c5a33be04be441','a58832d94f1683008cea3b718110c71c');
+		gs.info("T Access Token "+JSON.stringify(t));
+		rm.setRequestHeader('Authorization', 'Bearer '+t.getAccessToken());
+	},
+	*/
+
+	type: 'SplitwiseUtil'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-11-07 10:23:10</sys_created_on>
+        <sys_id>e4588f914f5683008cea3b718110c7a0</sys_id>
+        <sys_mod_count>71</sys_mod_count>
+        <sys_name>SplitwiseUtil</sys_name>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sys_script_include_e4588f914f5683008cea3b718110c7a0</sys_update_name>
+        <sys_updated_by>madeleonardis</sys_updated_by>
+        <sys_updated_on>2018-03-05 20:59:32</sys_updated_on>
+    </sys_script_include>
+</record_update>

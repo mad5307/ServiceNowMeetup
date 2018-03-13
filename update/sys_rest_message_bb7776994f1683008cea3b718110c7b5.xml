@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_rest_message">
+    <sys_rest_message action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <authentication_type>oauth2</authentication_type>
+        <basic_auth_password/>
+        <basic_auth_profile/>
+        <basic_auth_user/>
+        <description/>
+        <name>Splitwise API</name>
+        <oauth2_profile display_value="Splitwise default_profile">a58832d94f1683008cea3b718110c71c</oauth2_profile>
+        <protocol_name/>
+        <rest_endpoint>https://secure.splitwise.com/api/v3.0/create_group</rest_endpoint>
+        <sys_class_name>sys_rest_message</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-11-07 09:14:46</sys_created_on>
+        <sys_id>bb7776994f1683008cea3b718110c7b5</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>Splitwise API</sys_name>
+        <sys_package display_value="Meetup" source="x_8080_meetup">1b2101504fd203008cea3b718110c78b</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Meetup">1b2101504fd203008cea3b718110c78b</sys_scope>
+        <sys_update_name>sys_rest_message_bb7776994f1683008cea3b718110c7b5</sys_update_name>
+        <sys_updated_by>madeleonardis</sys_updated_by>
+        <sys_updated_on>2018-01-09 14:03:58</sys_updated_on>
+        <use_basic_auth>false</use_basic_auth>
+        <use_mutual_auth>false</use_mutual_auth>
+    </sys_rest_message>
+</record_update>
